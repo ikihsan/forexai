@@ -9,14 +9,34 @@ export class UsersService {
   async findById(id: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      include: {
+        subscription: true,
+      },
     });
+    
+    if (user) {
+      // Add computed subscription fields
+      (user as any).subscriptionStatus = user.subscription?.status || 'INACTIVE';
+      (user as any).subscriptionTier = user.subscription?.plan || 'FREE';
+    }
+    
     return user as User;
   }
 
   async findByEmail(email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
+      include: {
+        subscription: true,
+      },
     });
+    
+    if (user) {
+      // Add computed subscription fields
+      (user as any).subscriptionStatus = user.subscription?.status || 'INACTIVE';
+      (user as any).subscriptionTier = user.subscription?.plan || 'FREE';
+    }
+    
     return user as User;
   }
 

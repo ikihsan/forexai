@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { UserRole } from '@prisma/client';
+import { UserRole, SubscriptionStatus, SubscriptionPlan } from '@prisma/client';
+import { Subscription } from '../subscriptions/subscription.entity';
 
 registerEnumType(UserRole, {
   name: 'UserRole',
@@ -49,4 +50,15 @@ export class User {
 
   @Field()
   updatedAt: Date;
+
+  // Subscription relationship
+  @Field(() => Subscription, { nullable: true })
+  subscription?: Subscription;
+
+  // Computed subscription fields for easier access
+  @Field({ nullable: true })
+  subscriptionStatus?: string;
+
+  @Field({ nullable: true })
+  subscriptionTier?: string;
 }

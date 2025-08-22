@@ -13,6 +13,8 @@ interface User {
   lastName: string
   isActive: boolean
   createdAt: string
+  subscriptionStatus?: string
+  subscriptionTier?: string
 }
 
 interface AuthContextType {

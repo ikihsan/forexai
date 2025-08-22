@@ -12,6 +12,8 @@ export const LOGIN_MUTATION = gql`
         lastName
         isActive
         createdAt
+        subscriptionStatus
+        subscriptionTier
       }
     }
   }
@@ -28,6 +30,8 @@ export const REGISTER_MUTATION = gql`
         lastName
         isActive
         createdAt
+        subscriptionStatus
+        subscriptionTier
       }
     }
   }
@@ -50,6 +54,8 @@ export const GET_CURRENT_USER = gql`
       isActive
       createdAt
       updatedAt
+      subscriptionStatus
+      subscriptionTier
     }
   }
 `
