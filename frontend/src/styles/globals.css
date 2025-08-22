@@ -1,0 +1,294 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+    --success: 142.1 76.2% 36.3%;
+    --warning: 47.9 95.8% 53.1%;
+    --info: 199.6 89.5% 48.4%;
+    --bull: 142.1 76.2% 36.3%;
+    --bear: 0 84.2% 60.2%;
+    --neutral: 215.4 16.3% 46.9%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+    --success: 142.1 70.6% 45.3%;
+    --warning: 47.9 95.8% 53.1%;
+    --info: 199.6 89.5% 48.4%;
+    --bull: 142.1 70.6% 45.3%;
+    --bear: 0 62.8% 30.6%;
+    --neutral: 215 20.2% 65.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-muted/50;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-border/80;
+  }
+
+  /* Trading chart styles */
+  .trading-chart {
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.05) 100%);
+  }
+
+  /* Price movement animations */
+  .price-up {
+    @apply text-bull animate-pulse-success;
+  }
+
+  .price-down {
+    @apply text-bear animate-pulse-danger;
+  }
+
+  /* Gradient text effect */
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--info)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Fintech specific styles */
+  .trading-grid-bg {
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Custom focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+  }
+
+  /* Loading shimmer effect */
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* Market status indicators */
+  .market-open {
+    @apply bg-success/20 text-success border-success/30;
+  }
+
+  .market-closed {
+    @apply bg-danger/20 text-danger border-danger/30;
+  }
+
+  .market-pre {
+    @apply bg-warning/20 text-warning border-warning/30;
+  }
+
+  /* Button variants */
+  .btn-buy {
+    @apply bg-bull hover:bg-bull/90 text-white border-bull;
+  }
+
+  .btn-sell {
+    @apply bg-bear hover:bg-bear/90 text-white border-bear;
+  }
+
+  /* Chart theme overrides */
+  .tv-lightweight-charts {
+    border-radius: 0.75rem;
+  }
+
+  /* Custom number formatting */
+  .price-display {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* Responsive typography */
+  .text-responsive {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+  }
+}
+
+@layer components {
+  /* Custom component styles */
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .input-focus {
+    @apply transition-all duration-200 focus:ring-2 focus:ring-primary/50 focus:border-primary;
+  }
+
+  .nav-link {
+    @apply relative px-3 py-2 rounded-md text-sm font-medium transition-colors
+           hover:bg-accent hover:text-accent-foreground
+           focus:bg-accent focus:text-accent-foreground focus:outline-none;
+  }
+
+  .nav-link.active {
+    @apply bg-accent text-accent-foreground;
+  }
+
+  .nav-link.active::after {
+    content: '';
+    @apply absolute -bottom-1 left-1/2 w-1 h-1 bg-primary rounded-full transform -translate-x-1/2;
+  }
+
+  /* Trading specific components */
+  .trade-card {
+    @apply bg-card border border-border rounded-lg p-4 transition-all duration-200
+           hover:shadow-md hover:border-primary/30;
+  }
+
+  .profit-indicator {
+    @apply flex items-center gap-1 text-sm font-medium;
+  }
+
+  .profit-indicator.positive {
+    @apply text-bull;
+  }
+
+  .profit-indicator.negative {
+    @apply text-bear;
+  }
+
+  .profit-indicator.neutral {
+    @apply text-neutral;
+  }
+
+  /* Form components */
+  .form-group {
+    @apply space-y-2;
+  }
+
+  .form-label {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .form-input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm
+           ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium
+           placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed
+           disabled:opacity-50;
+  }
+
+  .form-error {
+    @apply text-sm text-destructive;
+  }
+
+  /* Loading states */
+  .loading-overlay {
+    @apply absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50;
+  }
+
+  .loading-spinner {
+    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-primary;
+  }
+
+  /* Status badges */
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .status-active {
+    @apply bg-success/10 text-success border border-success/20;
+  }
+
+  .status-inactive {
+    @apply bg-muted text-muted-foreground border border-border;
+  }
+
+  .status-pending {
+    @apply bg-warning/10 text-warning border border-warning/20;
+  }
+
+  .status-error {
+    @apply bg-destructive/10 text-destructive border border-destructive/20;
+  }
+}

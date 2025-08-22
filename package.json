@@ -1,0 +1,33 @@
+{
+  "name": "forex-ai-trading-platform",
+  "version": "1.0.0",
+  "description": "Production-grade SaaS platform for forex AI-powered trading",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm run test",
+    "test:frontend": "cd frontend && npm run test",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:seed": "cd backend && npx prisma db seed",
+    "db:studio": "cd backend && npx prisma studio"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

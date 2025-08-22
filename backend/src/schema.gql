@@ -1,0 +1,254 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AIModelPerformance {
+  avgProfitLoss: Float
+  correctPredictions: Float!
+  forexPair: String!
+  id: String!
+  modelName: String!
+  modelVersion: String!
+  periodEnd: DateTime!
+  periodStart: DateTime!
+  successRate: Float!
+  totalPredictions: Float!
+}
+
+type AIPrediction {
+  confidence: Float!
+  prediction: String!
+  reasoning: String!
+  stopLoss: Float!
+  targetPrice: Float!
+}
+
+type AuthPayload {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
+
+type CreateSubscriptionResponse {
+  clientSecret: String!
+  status: String!
+  subscriptionId: String!
+}
+
+input CreateTradeInput {
+  aiModelUsed: String
+  amount: Float!
+  forexPair: String!
+  tradeType: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ForexPair {
+  baseCurrency: String!
+  createdAt: DateTime!
+  id: String!
+  isActive: Boolean!
+  name: String!
+  quoteCurrency: String!
+  spread: Float!
+  symbol: String!
+  updatedAt: DateTime!
+}
+
+input ForgotPasswordInput {
+  email: String!
+}
+
+"""Subscription plan enumeration"""
+enum GqlSubscriptionPlan {
+  PREMIUM
+  PREMIUM_PLUS
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type MarketData {
+  close: Float!
+  createdAt: DateTime!
+  forexPair: String!
+  high: Float!
+  id: String!
+  low: Float!
+  open: Float!
+  timeframe: String!
+  timestamp: DateTime!
+  volume: Float!
+}
+
+type Mutation {
+  cancelSubscription: Boolean!
+  closeTrade(tradeId: String!): Trade!
+  createSubscription(priceId: String!): CreateSubscriptionResponse!
+  createTrade(input: CreateTradeInput!): Trade!
+  forgotPassword(input: ForgotPasswordInput!): Boolean!
+  login(input: LoginInput!): AuthPayload!
+  logout: Boolean!
+  reactivateSubscription: Boolean!
+  refreshTokens(refreshToken: String!): RefreshPayload!
+  register(input: RegisterInput!): AuthPayload!
+  resetPassword(input: ResetPasswordInput!): Boolean!
+  updateProfile(input: UpdateProfileInput!): User!
+}
+
+type PlanInfo {
+  currency: String!
+  description: String!
+  features: [String!]!
+  id: String!
+  interval: String!
+  name: String!
+  price: Float!
+  stripePriceId: String!
+}
+
+type Query {
+  getAIPrediction(forexPair: String!, modelType: String! = "model_a"): AIPrediction
+  getCurrentPrice(forexPair: String!): Float!
+  getCurrentSubscription: Subscription
+  getForexPairs: [ForexPair!]!
+  getMarketData(forexPair: String!, limit: Int! = 100, timeframe: String! = "1h"): [MarketData!]!
+  getModelPerformance(forexPair: String, modelName: String!): [AIModelPerformance!]!
+  getSubscriptionPlans: [PlanInfo!]!
+  getTrade(tradeId: String!): Trade
+  getTradeStats: TradeStats!
+  getUserTrades(limit: Int! = 50, status: String): [Trade!]!
+  me: User!
+  userStats: UserStats!
+}
+
+type RefreshPayload {
+  accessToken: String!
+  refreshToken: String!
+}
+
+input RegisterInput {
+  email: String!
+  firstName: String
+  lastName: String
+  password: String!
+  username: String
+}
+
+input ResetPasswordInput {
+  newPassword: String!
+  token: String!
+}
+
+type Subscription {
+  cancelAtPeriodEnd: Boolean!
+  canceledAt: DateTime
+  createdAt: DateTime!
+  currentPeriodEnd: DateTime
+  currentPeriodStart: DateTime
+  id: ID!
+  plan: GqlSubscriptionPlan!
+  status: SubscriptionStatus!
+  stripeCustomerId: String!
+  stripePriceId: String!
+  stripeSubscriptionId: String
+  updatedAt: DateTime!
+  userId: String!
+}
+
+"""Subscription status enumeration"""
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  INACTIVE
+  PAST_DUE
+  TRIALING
+}
+
+type Trade {
+  aiModelUsed: String
+  aiPrediction: String
+  amount: Float!
+  closedAt: DateTime
+  commission: Float!
+  createdAt: DateTime!
+  entryPrice: Float!
+  exitPrice: Float
+  forexPair: String!
+  id: ID!
+  openedAt: DateTime!
+  profitLoss: Float
+  status: TradeStatus!
+  tradeType: TradeType!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+type TradeStats {
+  avgProfitLoss: Float!
+  closedTrades: Int!
+  openTrades: Int!
+  totalCommissions: Float!
+  totalProfitLoss: Float!
+  totalTrades: Int!
+  winRate: Float!
+  winningTrades: Int!
+}
+
+"""Trade status enumeration"""
+enum TradeStatus {
+  CANCELED
+  CLOSED
+  OPEN
+  PENDING
+}
+
+"""Trade type enumeration"""
+enum TradeType {
+  BUY
+  SELL
+}
+
+input UpdateProfileInput {
+  avatar: String
+  firstName: String
+  lastName: String
+  username: String
+}
+
+type User {
+  avatar: String
+  createdAt: DateTime!
+  email: String!
+  emailVerified: Boolean!
+  emailVerifiedAt: DateTime
+  firstName: String
+  googleId: String
+  id: ID!
+  isActive: Boolean!
+  lastLoginAt: DateTime
+  lastName: String
+  role: UserRole!
+  updatedAt: DateTime!
+  username: String
+}
+
+"""User role enumeration"""
+enum UserRole {
+  ADMIN
+  SUPER_ADMIN
+  USER
+}
+
+type UserStats {
+  activeTrades: Int!
+  totalCommissions: Float!
+  totalProfitLoss: Float!
+  totalTrades: Int!
+}

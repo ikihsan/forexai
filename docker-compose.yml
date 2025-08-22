@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: forex-trading-db
+    environment:
+      POSTGRES_DB: forex_trading
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - forex-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: forex-trading-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - forex-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: forex-trading-backend
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/forex_trading
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - forex-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: forex-trading-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4000/graphql
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - forex-network
+
+volumes:
+  postgres_data:
+
+networks:
+  forex-network:
+    driver: bridge

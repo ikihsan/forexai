@@ -1,0 +1,213 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  username          String?   @unique
+  firstName         String?
+  lastName          String?
+  avatar            String?
+  password          String?
+  emailVerified     Boolean   @default(false)
+  emailVerifiedAt   DateTime?
+  role              UserRole  @default(USER)
+  isActive          Boolean   @default(true)
+  lastLoginAt       DateTime?
+  
+  // OAuth fields
+  googleId          String?   @unique
+  
+  // Relations
+  subscription      Subscription?
+  trades            Trade[]
+  commissionLogs    CommissionLog[]
+  aiModelUsage      AIModelUsage[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Subscription {
+  id                String              @id @default(cuid())
+  userId            String              @unique
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  stripeCustomerId  String              @unique
+  stripeSubscriptionId String?          @unique
+  stripePriceId     String
+  status            SubscriptionStatus  @default(INACTIVE)
+  plan              SubscriptionPlan
+  
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  canceledAt         DateTime?
+  cancelAtPeriodEnd  Boolean            @default(false)
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@map("subscriptions")
+}
+
+model Trade {
+  id                String        @id @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  forexPair         String        // e.g., "EUR/USD", "GBP/JPY"
+  tradeType         TradeType     // BUY or SELL
+  amount            Decimal       @db.Decimal(15, 2)
+  entryPrice        Decimal       @db.Decimal(10, 5)
+  exitPrice         Decimal?      @db.Decimal(10, 5)
+  
+  status            TradeStatus   @default(PENDING)
+  aiModelUsed       String?       // Reference to AI model version
+  aiPrediction      Json?         // Store prediction data
+  
+  profitLoss        Decimal?      @db.Decimal(15, 2)
+  commission        Decimal       @db.Decimal(15, 2) @default(0)
+  
+  openedAt          DateTime      @default(now())
+  closedAt          DateTime?
+  
+  // Relations
+  commissionLog     CommissionLog?
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@map("trades")
+}
+
+model CommissionLog {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  tradeId           String    @unique
+  trade             Trade     @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  
+  commissionAmount  Decimal   @db.Decimal(15, 2)
+  commissionRate    Decimal   @db.Decimal(5, 4) @default(0.02) // 2%
+  
+  processedAt       DateTime  @default(now())
+  
+  @@map("commission_logs")
+}
+
+model AIModelPerformance {
+  id                String    @id @default(cuid())
+  modelName         String
+  modelVersion      String
+  forexPair         String
+  
+  totalPredictions  Int       @default(0)
+  correctPredictions Int      @default(0)
+  successRate       Decimal   @db.Decimal(5, 4) @default(0) // e.g., 0.7550 for 75.50%
+  
+  avgProfitLoss     Decimal?  @db.Decimal(15, 2)
+  
+  periodStart       DateTime
+  periodEnd         DateTime
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([modelName, modelVersion, forexPair, periodStart])
+  @@map("ai_model_performance")
+}
+
+model AIModelUsage {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  modelName         String
+  modelVersion      String
+  forexPair         String
+  
+  requestData       Json
+  responseData      Json?
+  
+  usedAt            DateTime  @default(now())
+  
+  @@map("ai_model_usage")
+}
+
+model ForexPair {
+  id                String    @id @default(cuid())
+  symbol            String    @unique // e.g., "EURUSD"
+  name              String    // e.g., "Euro/US Dollar"
+  baseCurrency      String    // e.g., "EUR"
+  quoteCurrency     String    // e.g., "USD"
+  
+  isActive          Boolean   @default(true)
+  spread            Decimal   @db.Decimal(10, 5)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("forex_pairs")
+}
+
+model MarketData {
+  id                String    @id @default(cuid())
+  forexPair         String
+  
+  open              Decimal   @db.Decimal(10, 5)
+  high              Decimal   @db.Decimal(10, 5)
+  low               Decimal   @db.Decimal(10, 5)
+  close             Decimal   @db.Decimal(10, 5)
+  volume            Decimal   @db.Decimal(15, 2)
+  
+  timestamp         DateTime
+  timeframe         String    // e.g., "1m", "5m", "1h", "1d"
+  
+  createdAt         DateTime  @default(now())
+
+  @@unique([forexPair, timestamp, timeframe])
+  @@map("market_data")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+enum SubscriptionPlan {
+  PREMIUM
+  PREMIUM_PLUS
+}
+
+enum TradeType {
+  BUY
+  SELL
+}
+
+enum TradeStatus {
+  PENDING
+  OPEN
+  CLOSED
+  CANCELED
+}
